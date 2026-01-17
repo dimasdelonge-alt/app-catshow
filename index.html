@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Groomer - Catshow System</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .header-brand { background: linear-gradient(90deg, #111, #333); color: white; padding: 20px 0; margin-bottom: 20px; }
+        .table-responsive { max-height: 500px; overflow-y: auto; }
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1055; }
+        .disabled-section { opacity: 0.5; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div class="header-brand text-center shadow">
+        <h2><i class="fa-solid fa-cat"></i> Smart Groomer Indonesia</h2>
+        <p class="mb-0 text-white-50">Serverless Catshow Registration System</p>
+    </div>
+
+    <div class="container pb-5">
+        <div class="card shadow-sm p-3 mb-4">
+            <h6 class="border-bottom pb-2 mb-3"><i class="fa-solid fa-sliders"></i> Konfigurasi Sistem</h6>
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="fw-bold small">Tipe Show:</label>
+                    <select id="showType" class="form-select form-select-sm" onchange="handleConfigChange()">
+                        <option value="Tipe 1">Tipe 1: Simple (Ped vs Non-Ped)</option>
+                        <option value="Tipe 2">Tipe 2: Breed Base (Per Ras)</option>
+                        <option value="Tipe 3">Tipe 3: Complex (Breed + Status)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="fw-bold small">Logo Label (Optional):</label>
+                    <input type="file" id="logoInput" class="form-control form-select-sm" accept="image/*" onchange="handleLogoUpload()">
+                </div>
+                <div class="col-md-4">
+                    <label class="fw-bold small text-danger">Restore Database (CSV):</label>
+                    <div class="input-group input-group-sm">
+                        <input type="file" id="restoreInput" class="form-control" accept=".csv">
+                        <button class="btn btn-warning" onclick="restoreDatabase()">Upload</button>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="fw-bold small text-primary">Judul Label (Baris 1):</label>
+                    <input type="text" id="orgLine1" class="form-control form-control-sm" placeholder="Default: SMART GROOMER" oninput="handleConfigChange()">
+                </div>
+                <div class="col-md-6">
+                    <label class="fw-bold small text-primary">Judul Label (Baris 2):</label>
+                    <input type="text" id="orgLine2" class="form-control form-control-sm" placeholder="Default: INDONESIA" oninput="handleConfigChange()">
+                </div>
+            </div>
+        </div>
+
+        <ul class="nav nav-pills mb-3 nav-fill bg-white p-2 rounded shadow-sm" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pills-input-tab" data-bs-toggle="pill" data-bs-target="#pills-input" type="button" role="tab"><i class="fa-solid fa-pen-to-square"></i> Input / Edit Peserta</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-data-tab" data-bs-toggle="pill" data-bs-target="#pills-data" type="button" role="tab"><i class="fa-solid fa-database"></i> Database & Tools</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-input" role="tabpanel">
+                <div class="card p-4 border-primary">
+                    <div id="editModeAlert" class="alert alert-warning d-flex justify-content-between align-items-center" style="display:none !important;">
+                        <span><i class="fa-solid fa-triangle-exclamation"></i> <b>MODE EDIT</b></span>
+                        <button class="btn btn-sm btn-outline-dark" onclick="cancelEdit()">Batal</button>
+                    </div>
+
+                    <form id="regForm" onsubmit="handleRegister(event)">
+                        <input type="hidden" id="editId" value="">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Nama Pemilik</label>
+                                <input type="text" class="form-control" id="ownerName" required placeholder="Nama Owner">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">No HP</label>
+                                <input type="text" class="form-control" id="phoneNumber" placeholder="08xxx">
+                            </div>
+                            <hr>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Nama Kucing</label>
+                                <input type="text" class="form-control" id="catName" required placeholder="Nama Kucing">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Warna</label>
+                                <input type="text" class="form-control" id="catColor" required placeholder="e.g. Red Tabby">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Sex</label>
+                                <select class="form-select" id="catSex">
+                                    <option value="Jantan">Jantan</option>
+                                    <option value="Betina">Betina</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Ras</label>
+                                <select class="form-select" id="catBreed" onchange="updateFormUI()">
+                                    <option value="Persian">Persian</option>
+                                    <option value="Maine Coon">Maine Coon</option>
+                                    <option value="British Shorthair (BSH)">British Shorthair (BSH)</option>
+                                    <option value="Bengal">Bengal</option>
+                                    <option value="Other Purebred">Other Purebred (Ras Lain)</option>
+                                    <option value="Household Pet (Mix)">Household Pet (Mix)</option>
+                                    <option value="Domestik">Domestik</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6" id="otherBreedDiv" style="display:none;">
+                                <label class="form-label fw-bold">Detail Ras Lain</label>
+                                <input type="text" class="form-control" id="customBreed" placeholder="Ketik Ras...">
+                            </div>
+                            
+                            <div class="col-md-6" id="statusSection">
+                                <label class="form-label fw-bold">Status</label>
+                                <div class="d-flex gap-3">
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="catStatus" value="Pedigree" checked> Pedigree</div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="catStatus" value="Non-Pedigree"> Non-Ped</div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Umur</label>
+                                <div class="d-flex gap-3">
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="catAge" value="Kitten" checked> Kitten</div>
+                                    <div class="form-check"><input class="form-check-input" type="radio" name="catAge" value="Adult"> Adult</div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 mt-4">
+                                <button type="submit" id="btnSubmit" class="btn btn-primary w-100 py-2 fw-bold">DAFTARKAN PESERTA 🚀</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="pills-data" role="tabpanel">
+                <div class="card p-3">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-md-4">
+                            <h5 class="mb-0">Total: <span id="totalCount" class="badge bg-primary">0</span></h5>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-search"></i></span>
+                                <input type="text" id="searchInput" class="form-control" placeholder="Cari..." onkeyup="renderTable()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mb-3 flex-wrap">
+                        <button class="btn btn-success btn-sm" onclick="exportStyledExcel()"><i class="fa-solid fa-file-excel"></i> Excel Rapi</button>
+                        <button class="btn btn-danger btn-sm" onclick="generatePDF()"><i class="fa-solid fa-file-pdf"></i> Cetak PDF</button>
+                        <button class="btn btn-dark btn-sm" onclick="backupCSV()"><i class="fa-solid fa-download"></i> Backup CSV</button>
+                        <button class="btn btn-outline-danger btn-sm ms-auto" onclick="resetDatabase()"><i class="fa-solid fa-trash"></i> Reset All</button>
+                    </div>
+
+                    <div class="table-responsive bg-white border rounded">
+                        <table class="table table-hover table-striped mb-0 align-middle">
+                            <thead class="table-dark sticky-top">
+                                <tr>
+                                    <th>No</th>
+                                    <th>Pemilik</th>
+                                    <th>Kucing</th>
+                                    <th>Ras</th>
+                                    <th>Kelas</th>
+                                    <th class="text-end">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container">
+        <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // --- INIT DATA & CONFIG ---
+        let participants = JSON.parse(localStorage.getItem('catshowData')) || [];
+        let uploadedLogo = localStorage.getItem('catshowLogo') || null;
+        
+        // LOAD SAVED CONFIG (Tipe Show & Nama Organisasi)
+        let savedShowType = localStorage.getItem('catshowConfigType');
+        let savedOrgL1 = localStorage.getItem('catshowOrgL1');
+        let savedOrgL2 = localStorage.getItem('catshowOrgL2');
+
+        if (savedShowType) document.getElementById('showType').value = savedShowType;
+        if (savedOrgL1) document.getElementById('orgLine1').value = savedOrgL1;
+        if (savedOrgL2) document.getElementById('orgLine2').value = savedOrgL2;
+
+        // --- UI LOGIC ---
+        function updateFormUI() {
+            const breed = document.getElementById('catBreed').value;
+            const showType = document.getElementById('showType').value;
+            document.getElementById('otherBreedDiv').style.display = (breed === "Other Purebred") ? 'block' : 'none';
+
+            let shouldDisable = false;
+            let forceVal = null;
+
+            if (["Household Pet (Mix)", "Domestik"].includes(breed)) {
+                shouldDisable = true; forceVal = "Non-Pedigree";
+            }
+            if (showType === "Tipe 2") shouldDisable = false;
+
+            document.querySelectorAll('input[name="catStatus"]').forEach(r => {
+                r.disabled = shouldDisable;
+                if(forceVal && r.value === forceVal) r.checked = true;
+            });
+            document.getElementById('statusSection').classList.toggle('disabled-section', shouldDisable);
+        }
+
+        function handleConfigChange() { 
+            const type = document.getElementById('showType').value;
+            const l1 = document.getElementById('orgLine1').value;
+            const l2 = document.getElementById('orgLine2').value;
+
+            // Simpan semua config
+            localStorage.setItem('catshowConfigType', type);
+            localStorage.setItem('catshowOrgL1', l1);
+            localStorage.setItem('catshowOrgL2', l2);
+            
+            renderTable(); 
+            updateFormUI(); 
+        }
+        
+        function tentukanKelas(tipeShow, ras, status, umur) {
+            let rasKategori = ras.includes("Other Purebred") ? "Other Purebred" : ras;
+            if (["Household Pet (Mix)", "Domestik"].includes(rasKategori)) return `${rasKategori} - ${umur}`;
+            if (tipeShow === "Tipe 1") return `${status} - ${umur}`;
+            if (tipeShow === "Tipe 2") return `${rasKategori} - ${umur}`;
+            return `${rasKategori} ${status} - ${umur}`;
+        }
+
+        // --- EXCEL ---
+        function exportStyledExcel() {
+            const showType = document.getElementById('showType').value;
+            const sortedData = getProcessedData();
+            const wb = XLSX.utils.book_new();
+
+            const styleHeader = { font: { bold: true }, fill: { fgColor: { rgb: "FFF2CC" } }, border: { top: {style:'thin'}, bottom: {style:'thin'}, left: {style:'thin'}, right: {style:'thin'} }, alignment: { horizontal: "center", vertical: "center" } };
+            const styleTitle = { font: { bold: true, sz: 14 }, fill: { fgColor: { rgb: "DDEBF7" } }, alignment: { horizontal: "center", vertical: "center" } };
+            const styleBody = { border: { top: {style:'thin'}, bottom: {style:'thin'}, left: {style:'thin'}, right: {style:'thin'} }, alignment: { horizontal: "center", vertical: "center" } };
+
+            const grouped = {};
+            sortedData.forEach((p, idx) => {
+                const kls = tentukanKelas(showType, p.ras, p.status, p.umur);
+                if(!grouped[kls]) grouped[kls] = [];
+                let statusOutput = p.status;
+                if (["Household Pet (Mix)", "Domestik"].includes(p.ras) || showType === "Tipe 2") statusOutput = "-"; 
+
+                grouped[kls].push({
+                    "No": idx + 1, "Owner": p.owner, "HP": p.hp, "Kucing": p.kucing, 
+                    "Sex": p.sex, "Ras": p.ras, "Warna": p.warna, 
+                    "Status": statusOutput, "Umur": p.umur, "Kelas": kls
+                });
+            });
+
+            for (const [kelas, data] of Object.entries(grouped)) {
+                const wsData = [[""], ["No", "Nama Pemilik", "No HP", "Nama Kucing", "Jenis Kelamin", "Ras", "Warna", "Status", "Kategori Umur", "Kelas Lomba"]];
+                data.forEach(d => wsData.push([d.No, d.Owner, d.HP, d.Kucing, d.Sex, d.Ras, d.Warna, d.Status, d.Umur, d.Kelas]));
+                const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                if(!ws['!merges']) ws['!merges'] = [];
+                ws['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 9 } });
+                ws['A1'] = { t: 's', v: `KELAS: ${kelas.toUpperCase()}`, s: styleTitle };
+
+                for (let R = range.s.r; R <= range.e.r; ++R) {
+                    for (let C = range.s.c; C <= range.e.c; ++C) {
+                        const addr = XLSX.utils.encode_cell({r: R, c: C});
+                        if (!ws[addr]) continue;
+                        if (R === 1) ws[addr].s = styleHeader;
+                        else if (R > 1) ws[addr].s = styleBody;
+                    }
+                }
+                ws['!cols'] = [{wch: 5}, {wch: 25}, {wch: 15}, {wch: 25}, {wch: 15}, {wch: 25}, {wch: 20}, {wch: 15}, {wch: 15}, {wch: 30}];
+                XLSX.utils.book_append_sheet(wb, ws, kelas.replace(/[^a-zA-Z0-9 ]/g, "").substring(0, 30));
+            }
+            XLSX.writeFile(wb, "Katalog_Rapi_Final.xlsx");
+        }
+
+        // --- PDF LOGIC (CUSTOM NAME SUPPORT) ---
+        async function generatePDF() {
+            try {
+                if (!window.jspdf) throw new Error("Library PDF Error");
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+                const showType = document.getElementById('showType').value;
+                const sortedData = getProcessedData();
+
+                // AMBIL DATA CUSTOM HEADER (Default jika kosong)
+                const orgL1 = document.getElementById('orgLine1').value || "SMART GROOMER";
+                const orgL2 = document.getElementById('orgLine2').value || "INDONESIA";
+
+                if(sortedData.length === 0) { alert("Data kosong!"); return; }
+
+                const margin = 10, pageWidth = 210, pageHeight = 297, cols = 2, rows = 4;
+                const boxW = (pageWidth - (margin * 2)) / cols;
+                const boxH = (pageHeight - (margin * 2)) / rows;
+                let col = 0, row = 0;
+
+                for (let i = 0; i < sortedData.length; i++) {
+                    const p = sortedData[i];
+                    let x = margin + (col * boxW);
+                    let y = margin + (row * boxH);
+
+                    doc.setLineWidth(0.5); doc.rect(x, y, boxW, boxH);
+                    doc.line(x + 2, y + 20, x + boxW - 2, y + 20);
+
+                    if (uploadedLogo) {
+                        try { doc.addImage(uploadedLogo, 'PNG', x + 4, y + 4, 13, 13); } 
+                        catch (imgErr) { console.error("Logo skip:", imgErr); }
+                    }
+
+                    const cx = x + (boxW / 2);
+                    doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+                    // GUNAKAN CUSTOM HEADER
+                    doc.text(orgL1.toUpperCase(), cx, y + 10, {align: "center"});
+                    doc.text(orgL2.toUpperCase(), cx, y + 15, {align: "center"});
+                    
+                    doc.setFont("helvetica", "normal"); doc.setFontSize(8);
+                    doc.text(`Kelas: ${p.umur}`, x + boxW - 3, y + 8, {align: "right"});
+
+                    doc.setFont("helvetica", "bold"); doc.setFontSize(75);
+                    doc.text((i+1).toString(), cx, y + (boxH/2) + 12, {align: "center"});
+
+                    const fY = y + boxH - 5;
+                    const xL = x + 5, xV = x + 22;
+                    doc.setFont("helvetica", "normal"); doc.setFontSize(10);
+                    doc.text("Sex", xL, fY); doc.text(": "+p.sex, xV, fY);
+                    doc.text("Breed", xL, fY-5); 
+                    let rT = `${p.ras} (${p.warna})`; if(rT.length>32) rT = rT.substring(0,30)+"...";
+                    doc.text(": "+rT, xV, fY-5);
+                    doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+                    doc.text("Name", xL, fY-11);
+                    let nT = p.kucing; if(nT.length>22) nT = nT.substring(0,20)+"...";
+                    doc.text(": "+nT, xV, fY-11);
+
+                    col++;
+                    if(col >= cols) { col=0; row++; }
+                    if(row >= rows && i < sortedData.length-1) { doc.addPage(); col=0; row=0; }
+                }
+                doc.save("Label_Peserta.pdf");
+            } catch(e) { alert("Gagal PDF: " + e.message); }
+        }
+
+        // --- HELPER LAIN ---
+        function handleLogoUpload() {
+            const file = document.getElementById('logoInput').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width; canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        const cleanData = canvas.toDataURL('image/png');
+                        uploadedLogo = cleanData;
+                        localStorage.setItem('catshowLogo', cleanData);
+                        showToast("✅ Logo aman & tersimpan!");
+                    };
+                    img.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function getProcessedData() {
+            const showType = document.getElementById('showType').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            let data = participants.filter(p => p.kucing.toLowerCase().includes(search) || p.owner.toLowerCase().includes(search));
+            const getGroupRank = (ras) => (ras === "Domestik" ? 3 : (ras === "Household Pet (Mix)" ? 2 : 1));
+            const getStatusRank = (st) => (st === "Pedigree" ? 1 : (st === "Non-Pedigree" ? 2 : 3));
+            return data.sort((a, b) => {
+                if (getGroupRank(a.ras) !== getGroupRank(b.ras)) return getGroupRank(a.ras) - getGroupRank(b.ras);
+                if (showType === "Tipe 1") {
+                    if (getStatusRank(a.status) !== getStatusRank(b.status)) return getStatusRank(a.status) - getStatusRank(b.status);
+                    if (a.ras !== b.ras) return a.ras.localeCompare(b.ras);
+                } else {
+                    if (a.ras !== b.ras) return a.ras.localeCompare(b.ras);
+                    if (getStatusRank(a.status) !== getStatusRank(b.status)) return getStatusRank(a.status) - getStatusRank(b.status);
+                }
+                return a.warna.localeCompare(b.warna);
+            });
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            let ras = document.getElementById('catBreed').value;
+            if(ras === "Other Purebred") {
+                const custom = document.getElementById('customBreed').value;
+                if(custom) ras = `Other Purebred (${custom})`;
+            }
+            const formData = {
+                owner: document.getElementById('ownerName').value,
+                hp: document.getElementById('phoneNumber').value,
+                kucing: document.getElementById('catName').value,
+                warna: document.getElementById('catColor').value,
+                sex: document.getElementById('catSex').value,
+                ras: ras,
+                status: document.querySelector('input[name="catStatus"]:checked').value,
+                umur: document.querySelector('input[name="catAge"]:checked').value
+            };
+            const editId = document.getElementById('editId').value;
+            if (editId) {
+                const index = participants.findIndex(p => p.id == editId);
+                if (index !== -1) participants[index] = { ...participants[index], ...formData };
+                cancelEdit();
+            } else {
+                participants.push({ id: Date.now(), ...formData });
+                document.getElementById('regForm').reset();
+            }
+            updateFormUI(); renderTable(); showToast("✅ Data Disimpan!");
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const showType = document.getElementById('showType').value;
+            tbody.innerHTML = '';
+            const sorted = getProcessedData();
+            document.getElementById('totalCount').innerText = sorted.length;
+            sorted.forEach((p, idx) => {
+                const kelas = tentukanKelas(showType, p.ras, p.status, p.umur);
+                const row = `<tr><td>${idx+1}</td><td><b>${p.owner}</b><br><small>${p.hp}</small></td><td><b>${p.kucing}</b><br><small>${p.sex}, ${p.warna}</small></td><td>${p.ras}<br><small class="badge bg-secondary">${p.status}</small></td><td><span class="badge bg-info text-dark">${kelas}</span></td><td class="text-end" style="min-width:100px;"><button onclick="editData(${p.id})" class="btn btn-warning btn-sm me-1"><i class="fa fa-pen"></i></button><button onclick="deleteData(${p.id})" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button></td></tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+            localStorage.setItem('catshowData', JSON.stringify(participants));
+        }
+
+        function editData(id) {
+            const p = participants.find(item => item.id === id); if (!p) return;
+            document.getElementById('ownerName').value = p.owner; document.getElementById('phoneNumber').value = p.hp;
+            document.getElementById('catName').value = p.kucing; document.getElementById('catColor').value = p.warna; document.getElementById('catSex').value = p.sex;
+            if (p.ras.includes("Other Purebred")) { document.getElementById('catBreed').value = "Other Purebred"; document.getElementById('otherBreedDiv').style.display = 'block'; const m = p.ras.match(/\(([^)]+)\)/); document.getElementById('customBreed').value = m ? m[1] : ""; } else { document.getElementById('catBreed').value = p.ras; document.getElementById('otherBreedDiv').style.display = 'none'; }
+            document.querySelector(`input[name="catStatus"][value="${p.status}"]`).checked = true; document.querySelector(`input[name="catAge"][value="${p.umur}"]`).checked = true;
+            document.getElementById('editId').value = p.id; document.getElementById('btnSubmit').innerText = "💾 SIMPAN PERUBAHAN"; document.getElementById('btnSubmit').classList.replace('btn-primary', 'btn-warning'); document.getElementById('editModeAlert').style.display = 'flex';
+            new bootstrap.Tab(document.querySelector('#pills-input-tab')).show(); updateFormUI();
+        }
+
+        function cancelEdit() { document.getElementById('regForm').reset(); document.getElementById('editId').value = ""; document.getElementById('btnSubmit').innerText = "DAFTARKAN PESERTA 🚀"; document.getElementById('btnSubmit').classList.replace('btn-warning', 'btn-primary'); document.getElementById('editModeAlert').style.setProperty('display', 'none', 'important'); updateFormUI(); }
+        function deleteData(id) { if(confirm('Hapus permanen?')) { participants = participants.filter(p => p.id !== id); renderTable(); } }
+        function resetDatabase() { if(confirm('RESET SEMUA DATA?')) { participants = []; localStorage.removeItem('catshowData'); renderTable(); } }
+        
+        function backupCSV() { 
+            const showType = document.getElementById('showType').value;
+            const h = ["Nama Pemilik", "No HP", "Nama Kucing", "Jenis Kelamin", "Ras", "Warna", "Status", "Kategori Umur", "Kelas Lomba"]; 
+            const c = "data:text/csv;charset=utf-8," + h.join(",") + "\n" + 
+                participants.map(e => {
+                    const kelas = tentukanKelas(showType, e.ras, e.status, e.umur);
+                    return `${e.owner},${e.hp},${e.kucing},${e.sex},"${e.ras}",${e.warna},${e.status},${e.umur},${kelas}`;
+                }).join("\n"); 
+            const l = document.createElement("a"); l.href = encodeURI(c); l.download = "backup_catshow.csv"; document.body.appendChild(l); l.click(); 
+        }
+
+        // --- RESTORE (SHEETJS) ---
+        function restoreDatabase() { 
+            const f = document.getElementById('restoreInput').files[0]; 
+            if(!f) return alert("Pilih file CSV backup dulu!"); 
+            if(!confirm("⚠️ PERINGATAN: Data saat ini akan DITIMPA. Lanjut?")) return; 
+            
+            const r = new FileReader(); 
+            r.onload = e => { 
+                const data = e.target.result;
+                const workbook = XLSX.read(data, {type: 'binary'});
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
+
+                const n = [];
+                let detectedType = null; 
+
+                jsonData.forEach((row, i) => {
+                    const ras = row["Ras"] || "";
+                    const status = row["Status"] || "";
+                    const kelas = row["Kelas Lomba"] || "";
+
+                    if (!detectedType && !["Domestik", "Household Pet (Mix)"].includes(ras) && kelas) {
+                        if (kelas.startsWith("Pedigree") || kelas.startsWith("Non-Pedigree")) detectedType = "Tipe 1"; 
+                        else if (status && status !== "-" && kelas.includes(status)) detectedType = "Tipe 3"; 
+                        else detectedType = "Tipe 2"; 
+                    }
+
+                    n.push({ 
+                        id: Date.now() + i, 
+                        owner: row["Nama Pemilik"] || "", 
+                        hp: String(row["No HP"] || ""), 
+                        kucing: row["Nama Kucing"] || "", 
+                        sex: row["Jenis Kelamin"] || "", 
+                        ras: ras, warna: row["Warna"] || "", status: status, 
+                        umur: row["Kategori Umur"] || "" 
+                    }); 
+                });
+                
+                participants = n; 
+                renderTable(); 
+                updateFormUI();
+                alert(`✅ Restore Berhasil! ${n.length} data dimuat.`);
+            }; 
+            r.readAsBinaryString(f); 
+        }
+
+        function showToast(m) { document.getElementById('toastMessage').innerText = m; new bootstrap.Toast(document.getElementById('liveToast')).show(); }
+
+        updateFormUI(); renderTable();
+    </script>
+</body>
+</html>

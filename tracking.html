@@ -22,25 +22,29 @@
         }
 
         .header-brand {
-            background-color: #000000; /* Hitam Pekat */
+            background-color: #000000;
+            /* Hitam Pekat */
             padding: 15px 0;
             margin-bottom: 20px;
-            border-bottom: 3px solid #FFD700; /* Garis Emas Terang */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border-bottom: 3px solid #FFD700;
+            /* Garis Emas Terang */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
 
         /* Styling Logo */
         .brand-logo {
-            height: 55px; /* Ukuran disesuaikan */
+            height: 55px;
+            /* Ukuran disesuaikan */
             width: auto;
             /* Filter ini opsional: kalau logomu agak gelap, ini bikin lebih terang */
-            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3)); 
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3));
         }
-        
+
         .brand-text {
             text-align: left;
             line-height: 1.1;
-            padding-left: 10px; /* Jarak antara logo dan teks */
+            padding-left: 10px;
+            /* Jarak antara logo dan teks */
         }
 
         .brand-title {
@@ -48,15 +52,19 @@
             font-weight: 800;
             letter-spacing: 0.5px;
             margin: 0;
-            color: #FFD700; /* EMAS TERANG (Solid) */
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); /* Efek Glowing */
+            color: #FFD700;
+            /* EMAS TERANG (Solid) */
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+            /* Efek Glowing */
             text-transform: uppercase;
         }
 
         .brand-subtitle {
             font-size: 0.75rem;
-            color: #ffffff; /* Putih Bersih */
-            letter-spacing: 3px; /* Spasi antar huruf lebar */
+            color: #ffffff;
+            /* Putih Bersih */
+            letter-spacing: 3px;
+            /* Spasi antar huruf lebar */
             text-transform: uppercase;
             font-weight: 400;
             margin-top: 2px;
@@ -71,53 +79,158 @@
             overflow: hidden;
         }
 
-        .status-icon { font-size: 60px; margin-bottom: 15px; }
-        .status-badge { font-size: 1.2rem; padding: 10px 20px; border-radius: 50px; }
+        .status-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
 
-        .status-WAITING { background-color: #e9ecef; color: #6c757d; }
-        .status-BATHING { background-color: #cfe2ff; color: #0d6efd; }
-        .status-DRYING { background-color: #fff3cd; color: #856404; }
-        .status-FINISHING { background-color: #d1e7dd; color: #198754; }
-        .status-GROOMING { background-color: #d1e7dd; color: #198754; }
-        .status-PICKUP_READY { background-color: #f8d7da; color: #dc3545; }
-        .status-DONE { background-color: #d1e7dd; color: #198754; }
+        .status-badge {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            border-radius: 50px;
+        }
 
-        .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .detail-row:last-child { border-bottom: none; }
-        .detail-label { color: #666; font-weight: 500; }
-        .detail-value { font-weight: bold; color: #333; }
+        .status-WAITING {
+            background-color: #e9ecef;
+            color: #6c757d;
+        }
+
+        .status-BATHING {
+            background-color: #cfe2ff;
+            color: #0d6efd;
+        }
+
+        .status-DRYING {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-FINISHING {
+            background-color: #d1e7dd;
+            color: #198754;
+        }
+
+        .status-GROOMING {
+            background-color: #d1e7dd;
+            color: #198754;
+        }
+
+        .status-PICKUP_READY {
+            background-color: #f8d7da;
+            color: #dc3545;
+        }
+
+        .status-DONE {
+            background-color: #d1e7dd;
+            color: #198754;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-weight: bold;
+            color: #333;
+        }
 
         .loader {
-            width: 48px; height: 48px; border: 5px solid #FFF; border-bottom-color: #FF3D00;
-            border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite;
+            width: 48px;
+            height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: #FF3D00;
+            border-radius: 50%;
+            display: inline-block;
+            animation: rotation 1s linear infinite;
         }
-        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
 
         /* Timeline Styles */
-        .timeline { position: relative; padding-left: 30px; margin-top: 30px; text-align: left; }
-        .timeline-item { position: relative; padding-bottom: 25px; border-left: 2px solid #ddd; padding-left: 20px; }
-        .timeline-item:last-child { border-left: 2px solid transparent; }
-        .timeline-dot { position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background-color: #ddd; border: 2px solid #fff; }
-        .timeline-item.active .timeline-dot { background-color: #198754; box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2); }
-        .timeline-time { font-size: 0.85rem; color: #999; margin-bottom: 2px; }
-        .timeline-status { font-weight: 600; color: #333; }
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 25px;
+            border-left: 2px solid #ddd;
+            padding-left: 20px;
+        }
+
+        .timeline-item:last-child {
+            border-left: 2px solid transparent;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #ddd;
+            border: 2px solid #fff;
+        }
+
+        .timeline-item.active .timeline-dot {
+            background-color: #198754;
+            box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2);
+        }
+
+        .timeline-time {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 2px;
+        }
+
+        .timeline-status {
+            font-weight: 600;
+            color: #333;
+        }
 
         /* Footer Styles */
         .app-footer {
-            margin-top: auto; 
+            margin-top: auto;
             padding: 20px 0;
             text-align: center;
             color: #6c757d;
             font-size: 0.9rem;
         }
+
         .app-footer a {
             color: #6c757d;
             text-decoration: none;
             font-weight: 600;
             transition: color 0.3s;
         }
+
         .app-footer a:hover {
-            color: #d4af37; /* Hover jadi emas */
+            color: #d4af37;
+            /* Hover jadi emas */
         }
     </style>
 </head>
@@ -126,9 +239,9 @@
 
     <div class="header-brand shadow">
         <div class="container d-flex align-items-center justify-content-center">
-            
+
             <img src="assets/img/logo header2.png" alt="Logo" class="brand-logo">
-            
+
             <div class="brand-text">
                 <h1 class="brand-title">SMART GROOMER</h1>
                 <div class="brand-subtitle">INDONESIA</div>
@@ -253,52 +366,86 @@
                         day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
                     });
 
+                    // --- Timeline Logic ---
+                    let historyList = [];
+
                     if (data.history) {
-                        const historyList = [];
-                        Object.keys(data.history).forEach(key => { historyList.push(data.history[key]); });
+                        // Case A: Real History Exists
+                        Object.keys(data.history).forEach(key => {
+                            historyList.push(data.history[key]);
+                        });
                         historyList.sort((a, b) => b.updatedAt - a.updatedAt);
-                        
-                        const timelineContainer = document.getElementById('timelineContainer');
-                        const timelineListEl = document.getElementById('timelineList');
-                        timelineListEl.innerHTML = '';
-                        
-                        const filteredHistory = [];
-                        if (historyList.length > 0) {
-                            filteredHistory.push(historyList[0]);
-                            for (let i = 1; i < historyList.length; i++) {
-                                if (historyList[i].status !== historyList[i - 1].status) {
-                                    filteredHistory.push(historyList[i]);
-                                }
+                    } else {
+                        // Case B: No History (Legacy / Single Update) -> Auto-Generate
+                        const orderedStates = ["WAITING", "BATHING", "DRYING", "FINISHING", "PICKUP_READY", "DONE"];
+                        // Treat GROOMING as FINISHING
+                        let currentStatus = data.status;
+                        if (currentStatus === 'GROOMING') currentStatus = 'FINISHING';
+
+                        const currentIndex = orderedStates.indexOf(currentStatus);
+
+                        // Always add current status first
+                        const now = data.updatedAt || Date.now();
+                        historyList.push({ status: data.status, updatedAt: now });
+
+                        if (currentIndex > 0) {
+                            // Generate previous statuses (going back in time 15 mins each)
+                            for (let i = currentIndex - 1; i >= 0; i--) {
+                                const state = orderedStates[i];
+                                const timeOffset = (currentIndex - i) * 15 * 60 * 1000;
+                                historyList.push({ status: state, updatedAt: now - timeOffset });
                             }
                         }
+                    }
 
-                        if (filteredHistory.length > 0) {
-                            timelineContainer.style.display = 'block';
-                            filteredHistory.forEach((item, index) => {
-                                const itemStatusInfo = statusMap[item.status] || { text: item.status };
-                                const date = new Date(item.updatedAt);
-                                const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                                const dateStr = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-                                const isActive = index === 0 ? 'active' : '';
-                                const statusColor = isActive ? '#198754' : '#666';
-                                const fontWeight = isActive ? 'bold' : 'normal';
-                                let statusText = itemStatusInfo.text;
-                                if (item.status === 'DONE') statusText = 'Selesai - Sudah Dijemput/Antar';
+                    const timelineContainer = document.getElementById('timelineContainer');
+                    const timelineListEl = document.getElementById('timelineList');
+                    timelineListEl.innerHTML = '';
 
-                                const html = `
-                                    <div class="timeline-item ${isActive}">
-                                        <div class="timeline-dot"></div>
-                                        <div class="timeline-time">${dateStr}, ${timeStr}</div>
-                                        <div class="timeline-status" style="color: ${statusColor}; font-weight: ${fontWeight}">
-                                            ${statusText}
-                                        </div>
-                                    </div>
-                                `;
-                                timelineListEl.insertAdjacentHTML('beforeend', html);
-                            });
+                    // Filter duplicates (only if status changes)
+                    const filteredHistory = [];
+                    if (historyList.length > 0) {
+                        filteredHistory.push(historyList[0]); // Always show latest
+                        for (let i = 1; i < historyList.length; i++) {
+                            if (historyList[i].status !== historyList[i - 1].status) {
+                                filteredHistory.push(historyList[i]);
+                            }
                         }
+                    }
+
+                    if (filteredHistory.length > 0) {
+                        timelineContainer.style.display = 'block';
+                        filteredHistory.forEach((item, index) => {
+                            const itemStatusInfo = statusMap[item.status] || { text: item.status };
+                            const date = new Date(item.updatedAt);
+
+                            // Formatting date/time
+                            const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                            const dateStr = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+
+                            // Determine active state (latest item is active)
+                            const isActive = index === 0 ? 'active' : '';
+                            const statusColor = isActive ? '#198754' : '#666';
+                            const fontWeight = isActive ? 'bold' : 'normal';
+
+                            // Custom text for timeline
+                            let statusText = itemStatusInfo.text;
+                            if (item.status === 'DONE') statusText = 'Selesai - Sudah Dijemput/Antar';
+
+                            const html = `
+                                <div class="timeline-item ${isActive}">
+                                    <div class="timeline-dot"></div>
+                                    <div class="timeline-time">${dateStr}, ${timeStr}</div>
+                                    <div class="timeline-status" style="color: ${statusColor}; font-weight: ${fontWeight}">
+                                        ${statusText}
+                                    </div>
+                                </div>
+                            `;
+                            timelineListEl.insertAdjacentHTML('beforeend', html);
+                        });
                     } else {
-                        document.getElementById('timelineContainer').style.display = 'none';
+                        // Should not happen with auto-generate, but safe fallback
+                        timelineContainer.style.display = 'none';
                     }
 
                 } else {
@@ -318,4 +465,5 @@
         }
     </script>
 </body>
+
 </html>

@@ -16,22 +16,46 @@
         body {
             background-color: #f0f2f5;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .header-brand {
-            /* Background hitam agar menyatu dengan background logo */
-            background: #000; 
+            background: #000;
             color: white;
             padding: 15px 0;
             margin-bottom: 20px;
-            border-bottom: 3px solid #d4af37; /* Aksen emas di bawah header */
+            border-bottom: 3px solid #d4af37;
         }
 
-        /* Styling Logo */
+        /* Styling Logo & Teks Header */
         .brand-logo {
-            height: 100px; /* Ukuran tinggi logo, mainkan angka ini jika kurang besar/kecil */
+            height: 60px; /* Ukuran diperkecil biar pas sama teks */
             width: auto;
-            display: inline-block;
+            border-radius: 8px; /* Sedikit lengkung biar manis */
+        }
+        
+        .brand-text {
+            text-align: left;
+            line-height: 1.2;
+        }
+
+        .brand-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin: 0;
+            background: linear-gradient(45deg, #d4af37, #fwd700, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; /* Efek Emas pada Teks */
+        }
+
+        .brand-subtitle {
+            font-size: 0.8rem;
+            color: #ccc;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         /* Custom Tracking Styles */
@@ -43,16 +67,8 @@
             overflow: hidden;
         }
 
-        .status-icon {
-            font-size: 60px;
-            margin-bottom: 15px;
-        }
-
-        .status-badge {
-            font-size: 1.2rem;
-            padding: 10px 20px;
-            border-radius: 50px;
-        }
+        .status-icon { font-size: 60px; margin-bottom: 15px; }
+        .status-badge { font-size: 1.2rem; padding: 10px 20px; border-radius: 50px; }
 
         .status-WAITING { background-color: #e9ecef; color: #6c757d; }
         .status-BATHING { background-color: #cfe2ff; color: #0d6efd; }
@@ -62,75 +78,57 @@
         .status-PICKUP_READY { background-color: #f8d7da; color: #dc3545; }
         .status-DONE { background-color: #d1e7dd; color: #198754; }
 
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-        }
-
+        .detail-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
         .detail-row:last-child { border-bottom: none; }
         .detail-label { color: #666; font-weight: 500; }
         .detail-value { font-weight: bold; color: #333; }
 
         .loader {
-            width: 48px;
-            height: 48px;
-            border: 5px solid #FFF;
-            border-bottom-color: #FF3D00;
-            border-radius: 50%;
-            display: inline-block;
-            box-sizing: border-box;
-            animation: rotation 1s linear infinite;
+            width: 48px; height: 48px; border: 5px solid #FFF; border-bottom-color: #FF3D00;
+            border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite;
         }
-
-        @keyframes rotation {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* Timeline Styles */
-        .timeline {
-            position: relative;
-            padding-left: 30px;
-            margin-top: 30px;
-            text-align: left;
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-bottom: 25px;
-            border-left: 2px solid #ddd;
-            padding-left: 20px;
-        }
-
+        .timeline { position: relative; padding-left: 30px; margin-top: 30px; text-align: left; }
+        .timeline-item { position: relative; padding-bottom: 25px; border-left: 2px solid #ddd; padding-left: 20px; }
         .timeline-item:last-child { border-left: 2px solid transparent; }
-
-        .timeline-dot {
-            position: absolute;
-            left: -9px;
-            top: 0;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: #ddd;
-            border: 2px solid #fff;
-        }
-
-        .timeline-item.active .timeline-dot {
-            background-color: #198754;
-            box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2);
-        }
-
+        .timeline-dot { position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background-color: #ddd; border: 2px solid #fff; }
+        .timeline-item.active .timeline-dot { background-color: #198754; box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2); }
         .timeline-time { font-size: 0.85rem; color: #999; margin-bottom: 2px; }
         .timeline-status { font-weight: 600; color: #333; }
+
+        /* Footer Styles */
+        .app-footer {
+            margin-top: auto; /* Push footer to bottom */
+            padding: 20px 0;
+            text-align: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .app-footer a {
+            color: #6c757d;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .app-footer a:hover {
+            color: #d4af37; /* Hover jadi emas */
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="header-brand text-center shadow">
-        <img src="assets/img/logo header2.jpg" alt="Smart Groomer Indonesia" class="brand-logo">
+    <div class="header-brand shadow">
+        <div class="container d-flex align-items-center justify-content-center gap-3">
+            <img src="assets/img/logo header2.jpg" alt="Logo" class="brand-logo">
+            
+            <div class="brand-text">
+                <h1 class="brand-title">SMART GROOMER</h1>
+                <div class="brand-subtitle">INDONESIA</div>
+            </div>
+        </div>
     </div>
 
     <div class="container pb-5">
@@ -170,8 +168,7 @@
 
                     <div id="timelineContainer" style="display: none; padding-top: 20px; border-top: 1px solid #eee;">
                         <h6 style="text-align: left; margin-bottom: 20px; font-weight: bold;">Riwayat Status</h6>
-                        <div class="timeline" id="timelineList">
-                            </div>
+                        <div class="timeline" id="timelineList"></div>
                     </div>
 
                     <div class="mt-4 pt-3 border-top">
@@ -187,6 +184,15 @@
                     <p class="text-muted" id="errorMessage">Link tracking mungkin salah atau sesi sudah selesai.</p>
                 </div>
 
+            </div>
+        </div>
+
+        <div class="app-footer">
+            <p class="mb-1">Application developed by <strong>Jeni Cathouse</strong></p>
+            <div>
+                <a href="https://instagram.com/arifdimass" target="_blank">
+                    <i class="fa-brands fa-instagram me-1"></i> arifdimass
+                </a>
             </div>
         </div>
     </div>
@@ -242,18 +248,15 @@
                         day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
                     });
 
-                    // Timeline Logic
                     if (data.history) {
                         const historyList = [];
-                        Object.keys(data.history).forEach(key => {
-                            historyList.push(data.history[key]);
-                        });
+                        Object.keys(data.history).forEach(key => { historyList.push(data.history[key]); });
                         historyList.sort((a, b) => b.updatedAt - a.updatedAt);
-
+                        
                         const timelineContainer = document.getElementById('timelineContainer');
                         const timelineListEl = document.getElementById('timelineList');
                         timelineListEl.innerHTML = '';
-
+                        
                         const filteredHistory = [];
                         if (historyList.length > 0) {
                             filteredHistory.push(historyList[0]);
@@ -310,5 +313,4 @@
         }
     </script>
 </body>
-
 </html>

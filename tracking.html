@@ -118,6 +118,52 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Timeline Styles */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 25px;
+            border-left: 2px solid #ddd;
+            padding-left: 20px;
+        }
+
+        .timeline-item:last-child {
+            border-left: 2px solid transparent;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -9px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #ddd;
+            border: 2px solid #fff;
+        }
+
+        .timeline-item.active .timeline-dot {
+            background-color: #198754;
+            box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.2);
+        }
+
+        .timeline-time {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 2px;
+        }
+
+        .timeline-status {
+            font-weight: 600;
+            color: #333;
+        }
     </style>
 </head>
 
@@ -163,6 +209,13 @@
                         <div class="detail-row">
                             <span class="detail-label"><i class="fa-regular fa-clock me-2"></i>Terakhir Update</span>
                             <span id="lastUpdate" class="detail-value text-end" style="font-size: 0.9em;">-</span>
+                        </div>
+                    </div>
+
+                    <div id="timelineContainer" style="display: none; padding-top: 20px; border-top: 1px solid #eee;">
+                        <h6 style="text-align: left; margin-bottom: 20px; font-weight: bold;">Riwayat Status</h6>
+                        <div class="timeline" id="timelineList">
+                            <!-- Timeline items will be injected here -->
                         </div>
                     </div>
 
@@ -239,6 +292,66 @@
                     document.getElementById('lastUpdate').innerText = date.toLocaleString('id-ID', {
                         day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
                     });
+
+                    // --- Timeline Logic ---
+                    if (data.history) {
+                        const historyList = [];
+                        // Convert history object to array
+                        Object.keys(data.history).forEach(key => {
+                            historyList.push(data.history[key]);
+                        });
+
+                        // Sort by timestamp descending (newest first)
+                        historyList.sort((a, b) => b.updatedAt - a.updatedAt);
+
+                        const timelineContainer = document.getElementById('timelineContainer');
+                        const timelineListEl = document.getElementById('timelineList');
+                        timelineListEl.innerHTML = '';
+
+                        // Filter duplicates (only if status changes)
+                        const filteredHistory = [];
+                        if (historyList.length > 0) {
+                            filteredHistory.push(historyList[0]); // Always show latest
+                            for (let i = 1; i < historyList.length; i++) {
+                                if (historyList[i].status !== historyList[i - 1].status) {
+                                    filteredHistory.push(historyList[i]);
+                                }
+                            }
+                        }
+
+                        if (filteredHistory.length > 0) {
+                            timelineContainer.style.display = 'block';
+                            filteredHistory.forEach((item, index) => {
+                                const itemStatusInfo = statusMap[item.status] || { text: item.status };
+                                const date = new Date(item.updatedAt);
+                                const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                                const dateStr = date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+
+                                // Determine active state (latest item is active)
+                                const isActive = index === 0 ? 'active' : '';
+                                const statusColor = isActive ? '#198754' : '#666';
+                                const fontWeight = isActive ? 'bold' : 'normal';
+
+                                // Custom text for timeline
+                                let statusText = itemStatusInfo.text;
+                                if (item.status === 'DONE') statusText = 'Selesai - Sudah Dijemput/Antar';
+
+                                const html = `
+                                    <div class="timeline-item ${isActive}">
+                                        <div class="timeline-dot"></div>
+                                        <div class="timeline-time">${dateStr}, ${timeStr}</div>
+                                        <div class="timeline-status" style="color: ${statusColor}; font-weight: ${fontWeight}">
+                                            ${statusText}
+                                        </div>
+                                    </div>
+                                `;
+                                timelineListEl.insertAdjacentHTML('beforeend', html);
+                            });
+                        }
+                    } else {
+                        // Fallback checking to hide timeline if no history
+                        document.getElementById('timelineContainer').style.display = 'none';
+                    }
 
                 } else {
                     document.getElementById('content').style.display = 'none';

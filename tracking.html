@@ -22,40 +22,44 @@
         }
 
         .header-brand {
-            background: #000;
-            color: white;
+            background-color: #000000; /* Hitam Pekat */
             padding: 15px 0;
             margin-bottom: 20px;
-            border-bottom: 3px solid #d4af37;
+            border-bottom: 3px solid #FFD700; /* Garis Emas Terang */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        /* Styling Logo & Teks Header */
+        /* Styling Logo */
         .brand-logo {
-            height: 60px; /* Ukuran diperkecil biar pas sama teks */
+            height: 55px; /* Ukuran disesuaikan */
             width: auto;
-            border-radius: 8px; /* Sedikit lengkung biar manis */
+            /* Filter ini opsional: kalau logomu agak gelap, ini bikin lebih terang */
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3)); 
         }
         
         .brand-text {
             text-align: left;
-            line-height: 1.2;
+            line-height: 1.1;
+            padding-left: 10px; /* Jarak antara logo dan teks */
         }
 
         .brand-title {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             font-weight: 800;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             margin: 0;
-            background: linear-gradient(45deg, #d4af37, #fwd700, #d4af37);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent; /* Efek Emas pada Teks */
+            color: #FFD700; /* EMAS TERANG (Solid) */
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); /* Efek Glowing */
+            text-transform: uppercase;
         }
 
         .brand-subtitle {
-            font-size: 0.8rem;
-            color: #ccc;
-            letter-spacing: 2px;
+            font-size: 0.75rem;
+            color: #ffffff; /* Putih Bersih */
+            letter-spacing: 3px; /* Spasi antar huruf lebar */
             text-transform: uppercase;
+            font-weight: 400;
+            margin-top: 2px;
         }
 
         /* Custom Tracking Styles */
@@ -100,7 +104,7 @@
 
         /* Footer Styles */
         .app-footer {
-            margin-top: auto; /* Push footer to bottom */
+            margin-top: auto; 
             padding: 20px 0;
             text-align: center;
             color: #6c757d;
@@ -121,8 +125,9 @@
 <body>
 
     <div class="header-brand shadow">
-        <div class="container d-flex align-items-center justify-content-center gap-3">
-            <img src="assets/img/logo header2.jpg" alt="Logo" class="brand-logo">
+        <div class="container d-flex align-items-center justify-content-center">
+            
+            <img src="assets/img/logo-transparan.png" alt="Logo" class="brand-logo">
             
             <div class="brand-text">
                 <h1 class="brand-title">SMART GROOMER</h1>
